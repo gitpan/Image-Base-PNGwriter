@@ -1,0 +1,50 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.63.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
+SHA1 84865e32c02faf61addb7026aacdd3ba0dd5199d Changes
+SHA1 993c61b556443d3ffcc3063633f425c0fffd0c75 MANIFEST
+SHA1 5354a121e2eef6ad536babbb38b4768b31e306fe MANIFEST.SKIP
+SHA1 a398a271f86791a8af0f88ea7a3c89c7593117f2 META.yml
+SHA1 d530381d31bf8b983248ed29951032d3c7820f38 Makefile.PL
+SHA1 e45e158458b6d4a8a4b3342524a87f2393c8b3fe debian/changelog
+SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
+SHA1 7852b81ffa9360ca0e68200211c16217c58f4242 debian/control
+SHA1 2b4fb85ce8c152ff697375b31b18ab93d900aa44 debian/copyright
+SHA1 6295122273dca7fec5824cb0d5cfab600c43af3e debian/rules
+SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
+SHA1 79dc1afe3d9212ffe390505d9c0c64fed52bbc2c debian/watch
+SHA1 984f0e9d9a48c172c9b6f640061a80e6c828ba0b devel/Makefile
+SHA1 4ab094e1d97c7d12a512b53f1b30edacec9003db devel/misc.cc
+SHA1 a552c103f7ce4aa760e49e7228dddf8a710b2718 devel/pngwriter.pl
+SHA1 68ea7ae143fc8e62b51a59c2a0bc19b90e734456 devel/unused.pl
+SHA1 5558edc5e44856cc82bb7648d031bfd6c64a346d inc/MyMakeMakerExtras.pm
+SHA1 63427b66eb26f013f10c835b0cf320c93361f310 inc/my_pod2html
+SHA1 7d3c906b3e3006574a6c21d81443bd9e9f7b0330 lib/Image/Base/PNGwriter.pm
+SHA1 d5d5c83c83918d8c97ca79e92ea840cdf277f01f t/0-META-read.t
+SHA1 37abd43b41068804ea4bb099fdd89af21be82926 t/0-Test-DistManifest.t
+SHA1 8f93fb4c8f0424a4442cc93c9a2e86342ef55281 t/0-Test-Pod.t
+SHA1 1de8f07883f6bf1a2ef79f2cb8adf1deb3f61cee t/0-Test-Synopsis.t
+SHA1 fb517c2fae5ddac559318bf6a224949115ea3129 t/0-Test-YAML-Meta.t
+SHA1 e5b9059d5e27d380fc9418095d773ad5f96baa06 t/MyTestHelpers.pm
+SHA1 4a4f3b87bc0f6621c251901154c93612d51fe7fb t/PNGwriter.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.10 (GNU/Linux)
+
+iD8DBQFMH/4xLFMCIV9q3ToRArc+AJsH9HcinGsqCOKsMhCdO7CXvcV1jwCfUFKN
+umfXvHrCe9ZnOove1gFrT+A=
+=WIpl
+-----END PGP SIGNATURE-----
