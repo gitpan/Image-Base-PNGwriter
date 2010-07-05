@@ -1,30 +1,30 @@
 # Copyright 2010 Kevin Ryde
 
-# This file is part of Math-Image.
+# This file is part of Image-Base-PNGwriter.
 #
-# Math-Image is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by the
-# Free Software Foundation; either version 3, or (at your option) any later
-# version.
+# Image-Base-PNGwriter is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3, or (at your option) any
+# later version.
 #
-# Math-Image is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-# for more details.
+# Image-Base-PNGwriter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along
-# with Math-Image.  If not, see <http://www.gnu.org/licenses/>.
+# with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
 
 package Image::Base::PNGwriter;
-# Image::PNGwriter 0.01 requires 5.8.5, no need to go back earlier than it,
-# though seems it could probably go earlier, depending perhaps what new
-# enough xsubpp can do C++
+# Image::Base is good for 5.004 or some such far back, though
+# Image::PNGwriter 0.01 requires 5.8.5, so that's the actual minimum.  It
+# looks like Image::PNGwriter could probably go earlier, unless maybe it
+# needs a new enough xsubpp for C++.
 use 5.004;
 use strict;
 use warnings;
 use Carp;
-use File::Spec 0.8;  # version 0.8 in perl 5.6 for ->devnull()
 use Image::PNGwriter;
 use base 'Image::Base';
 
@@ -32,7 +32,12 @@ use base 'Image::Base';
 #use Smart::Comments;
 
 use vars '$VERSION';
-$VERSION = 1;
+$VERSION = 2;
+
+# Cribs:
+#
+# /usr/include/pngwriter.h
+
 
 use constant _DEFAULT_PALETTE => { 'black' => [ 0,0,0 ],
                                    'white' => [ 1,1,1 ] };
@@ -41,19 +46,38 @@ sub new {
   my ($class, %params) = @_;
   ### Image-Base-PNGwriter new(): %params
 
-  # -palette not yet documented
+  # $obj->new(...) means make a copy, with some extra settings
+  if (ref $class) {
+    # needs the pngwriter copy-constructor ...
+    die "Image cloning not yet implemented";
+    #     my $self = $class;
+    #     $class = ref $class;
+    #     if (! defined $params{'-pngwriter'}) {
+    #       $params{'-pngwriter'} = $self->get('-pngwriter')->clone;
+    #     }
+    #     # inherit everything else
+    #     %params = (%$self, %params);
+  }
+
+  # -palette not yet documented, maybe call it -cindex anyway
   my $self = bless { -palette => _DEFAULT_PALETTE,
-                     -zlib_compression => -1 }, $class;
+                     -zlib_compression => -1,
+                   }, $class;
   if (! defined $params{'-pngwriter'}) {
     my $width = delete $params{'-width'};
     if (! defined $width) { $width = 1; }
     my $height = delete $params{'-height'};
     if (! defined $height) { $height = 1; }
+
+    # can't pass undef to Image::PNGwriter->new
+    my $filename = $params{'-file'};
+    if (! defined $filename) { $filename = ''; }
+
+    # the filename to new() supplied is not read, just recorded in the $pw
     my $pw = $self->{'-pngwriter'}
       = Image::PNGwriter->new ($width, $height,
                                0,  # background
-                               File::Spec->devnull);
-    $pw->pngwriter_rename ('');
+                               $filename);
   }
   my $filename = delete $params{'-file'};
 
@@ -62,6 +86,7 @@ sub new {
   if (defined $filename) {
     $self->load ($filename);
   }
+  ### $self
   return $self;
 }
 
@@ -73,9 +98,11 @@ my %attr_to_get_method = (-width     => 'getwidth',
                           -colortype => 'getcolortype');
 sub _get {
   my ($self, $key) = @_;
+  ### Image-Base-PNGwriter _get(): $key
   if (my $method = $attr_to_get_method{$key}) {
     return $self->{'-pngwriter'}->$method;
   }
+  ### field: $self->{$key}
   return $self->SUPER::_get ($key);
 }
 
@@ -142,7 +169,10 @@ sub save {
 
 sub xy {
   my ($self, $x, $y, $colour) = @_;
+  ### xy: $x, $y, $colour
   my $pw = $self->{'-pngwriter'};
+  $x = int($x);
+  $y = int($y);
   $x++;
   $y = $pw->getheight - $y;
   if (@_ == 4) {
@@ -157,26 +187,52 @@ sub xy {
 sub line {
   my ($self, $x1, $y1, $x2, $y2, $colour) = @_;
   my $pw = $self->{'-pngwriter'};
-  my $h = $pw->getheight;
-  $pw->line ($x1+1, $h-$y1,
-             $x2+1, $h-$y2,
+  my $height = $pw->getheight;
+  $pw->line ($x1+1, $height-$y1,
+             $x2+1, $height-$y2,
              $self->colour_to_drgb($colour));
 }
 sub rectangle {
   my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
   ### Image-Base-PNGwriter rectangle(): $x1, $y1, $x2, $y2, $colour, $fill
   my $pw = $self->{'-pngwriter'};
-  my $h = $pw->getheight;
+  my $height = $pw->getheight;
   my $method = ($fill ? 'filledsquare' : 'square');
-  $pw->$method ($x1+1, $h-$y1,
-                $x2+1, $h-$y2,
+  $pw->$method ($x1+1, $height-$y1,
+                $x2+1, $height-$y2,
                 $self->colour_to_drgb($colour));
 }
 
-# only $pw->circle available, apparently
-# sub ellipse {
-#   my ($self, $x1, $y1, $x2, $y2, $colour) = @_;
-# }
+# Only $pw->circle available, apparently.  For radius 2 it draws something
+# like
+#
+#       O
+#      O O
+#     O . O
+#      O O
+#       O
+#
+# which is x2==x1+4 and y2==y1+4.  The parameters to circle() are integers,
+# so only even-diameter circles like this can be done, others go to
+# Image::Base.
+#
+sub ellipse {
+  my ($self, $x1, $y1, $x2, $y2, $colour) = @_;
+  ### ellipse: $x1, $y1, $x2, $y2, $colour
+  my $xr = $x2 - $x1;
+  if (! ($xr & 1) && $xr == ($y2 - $y1)) {
+    my $pw = $self->{'-pngwriter'};
+    $xr /= 2;
+    ### $xr
+    ### x centre: $x1+$xr
+    ### y centre: $pw->getheight() - ($y1+$xr)
+    $pw->circle ($x1+$xr+1, $pw->getheight() - ($y1+$xr), $xr,
+                 $self->colour_to_drgb($colour));
+  } else {
+    ### use base
+    shift->SUPER::ellipse(@_);
+  }
+}
 
 # not documented, yet ...
 sub colour_to_drgb {
@@ -187,8 +243,14 @@ sub colour_to_drgb {
   if (ref $colour) {
     return @$colour;
   }
-  if (my ($r, $g, $b) = ($colour =~ /^#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i)) {
-    return hex($r) / 255, hex($g) / 255, hex($b) / 255;
+
+  # hex values turned into doubles by spacing equally from 00 -> 0.0 through
+  # FF -> 1.0, or FFFF -> 1.0.
+  if (my @rgb = ($colour =~ /^#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i)) {
+    return map {hex()/0xFF} @rgb;
+  }
+  if (my @rgb = ($colour =~ /^#([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})$/i)) {
+    return map {hex()/0xFFFF} @rgb;
   }
   croak "Unknown colour: $colour";
 }
@@ -196,7 +258,7 @@ sub colour_to_drgb {
 1;
 __END__
 
-=for stopwords PNG pngwriter filename undef Ryde Zlib Image::Base::PNGwriter Image::PNGwriter
+=for stopwords PNG pngwriter filename Ryde Zlib Zlib's Image::Base::PNGwriter Image::PNGwriter Image-Base-PNGwriter
 
 =head1 NAME
 
@@ -209,6 +271,7 @@ Image::Base::PNGwriter -- draw PNG format images
                                           -height => 100);
  $image->line (0,0, 99,99, '#FF00FF');
  $image->rectangle (10,10, 20,15, 'white');
+ $image->ellipse (30,30, 90,90, '#AAAA3333DDDD');
  $image->save ('/some/filename.png');
 
 =head1 CLASS HIERARCHY
@@ -224,12 +287,12 @@ C<Image::Base::PNGwriter> extends C<Image::Base> to create or update PNG
 format image files using the C<Image::PNGwriter> module and pngwriter
 library.
 
-There's no colour name database as yet, only "black", "white" and two digit
-hex "#RRGGBB".
+There's no colour name database as yet, only "black", "white" and hex
+"#RRGGBB" or "#RRRRGGGGBBBB".
 
 As per C<Image::Base>, coordinates are from 0,0 for the top-left corner.
-(The underlying pngwriter library is 1,1 as the bottom-left but
-C<Image::Base::PNGwriter> converts.)
+The underlying pngwriter library is 1,1 as the bottom-left but
+C<Image::Base::PNGwriter> converts.
 
 =head1 FUNCTIONS
 
@@ -251,6 +314,17 @@ Or an existing file can be read,
 Or an C<Image::PNGwriter> object can be given,
 
     $image = Image::Base::PNGwriter->new (-pngwriter => $pwobj);
+
+=item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour)>
+
+Draw an ellipse within the rectangle bounded by C<$x1>,C<$y1> and
+C<$x2>,C<$y2>.
+
+In the current implementation circles with an odd diameter (when
+C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
+pngwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
+uses the features of pngwriter as far as possible and its drawing should be
+faster.
 
 =back
 
@@ -284,7 +358,7 @@ The underlying C<Image::PNGwriter> object in use.
 
 Because filename and compression level can't be read out of a pngwriter
 object, if you set C<-pngwriter> then a C<get> of the C<-file> or
-C<-zlib_compression> will return C<undef>, and there's no default filename
+C<-zlib_compression> will return C<undef> and there's no default filename
 for C<load>.  A C<save> will use the filename and compression in the object
 though.  Perhaps this will improve in the future.
 
@@ -293,8 +367,8 @@ though.  Perhaps this will improve in the future.
 =head1 SEE ALSO
 
 L<Image::Base>,
-L<Image::Base::GD>,
-L<Image::PNGwriter>
+L<Image::PNGwriter>,
+L<Image::Base::GD>
 
 =head1 HOME PAGE
 

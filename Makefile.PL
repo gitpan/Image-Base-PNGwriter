@@ -34,7 +34,6 @@ MyMakeMakerExtras::WriteMakefile
    PREREQ_PM    => {
                     'Image::Base' => 0,
                     'Image::PNGwriter' => 0,
-                    'File::Spec' => '0.8',  # version 0.8 for ->devnull()
                    },
    MIN_PERL_VERSION => '5.004',
 

@@ -1,5 +1,5 @@
-libimage-base-pngwriter-perl (1-1) unstable; urgency=low
+libimage-base-pngwriter-perl (2-1) unstable; urgency=low
 
   * Packaged version.
 
- -- Kevin Ryde <user42@zip.com.au>  Tue, 22 Jun 2010 09:48:16 +1000
+ -- Kevin Ryde <user42@zip.com.au>  Tue, 06 Jul 2010 09:50:15 +1000

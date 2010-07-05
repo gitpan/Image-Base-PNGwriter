@@ -2,25 +2,61 @@
 
 # Copyright 2010 Kevin Ryde
 
-# This file is part of Math-Image.
+# This file is part of Image-Base-PNGwriter.
 #
-# Math-Image is free software; you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by the
-# Free Software Foundation; either version 3, or (at your option) any later
-# version.
+# Image-Base-PNGwriter is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License as published
+# by the Free Software Foundation; either version 3, or (at your option) any
+# later version.
 #
-# Math-Image is distributed in the hope that it will be useful, but
-# WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-# or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
-# for more details.
+# Image-Base-PNGwriter is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General
+# Public License for more details.
 #
 # You should have received a copy of the GNU General Public License along
-# with Math-Image.  If not, see <http://www.gnu.org/licenses/>.
+# with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
 
 use strict;
 use warnings;
 # use blib "$ENV{HOME}/perl/image/Image-PNGwriter-0.01/blib";
+
+{
+  require Image::PNGwriter;
+  my $pw = Image::PNGwriter->new(50,20,0,'/tmp/x.png');
+  my $r = 0;
+  #  $pw->plot (6,6, .5,.5,.5);
+  # $pw->circle (6,6, $r, 1,1,1);
+
+  require Image::Base::PNGwriter;
+  my $image = Image::Base::PNGwriter->new(-pngwriter => $pw);
+  $image->rectangle (0,0,49,19, '#000000');
+  #   $image->ellipse (20,        20-2-(2*$r),
+  #                    20+(2*$r), 20-2,
+  #                    '#00FF00');
+  $pw->write_png;
+  system ("convert /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
+  $image->ellipse (1,11, 6,13,
+                   '#00FF00');
+  $pw->write_png;
+  system ("convert /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
+
+  $image->xy (40,20-2, '#AABBCC');
+  $image->xy (40,20-2-(2*$r), '#AABBCC');
+
+  print "done\n";
+  exit 0;
+}
+
+{
+  require Image::PNGwriter;
+  my $pw = Image::PNGwriter->new(100,100,0,'/tmp/x.png');
+  my $copy = $pw->CLONE;
+  # my $copy = Image::PNGwriter->new($pw);
+  print "done\n";
+  exit 0;
+}
 
 {
   require Image::PNGwriter;
