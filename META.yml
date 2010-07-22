@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-PNGwriter
-version:            2
+version:            3
 abstract:           Image::Base PNG using PNGwriter.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -13,7 +13,10 @@ build_requires:
 requires:
     Image::Base:       0
     Image::PNGwriter:  0
+    List::Util:        0
     perl:              5.004
+    Test::More:        0
+    warnings:          0
 resources:
     homepage:  http://user42.tuxfamily.org/image-base-pngwriter/index.html
     license:   http://www.gnu.org/licenses/gpl.html
@@ -37,7 +40,6 @@ optional_features:
             File::Spec:          0
             Parse::CPAN::Meta:   0
             Test::DistManifest:  0
-            Test::NoWarnings:    0
             Test::Pod:           1.00
             Test::Synopsis:      0
             Test::YAML::Meta:    0.15

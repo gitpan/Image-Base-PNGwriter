@@ -17,15 +17,14 @@
 # You should have received a copy of the GNU General Public License along
 # with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
-use 5.010;
+use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 84;
+use Test::More tests => 1006;
 
-BEGIN {
- SKIP: { eval 'use Test::NoWarnings; 1'
-           or skip 'Test::NoWarnings not available', 1; }
-}
+use lib 't';
+use MyTestHelpers;
+BEGIN { MyTestHelpers::nowarnings() }
 
 require Image::Base::PNGwriter;
 
@@ -89,7 +88,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 2;
+  my $want_version = 3;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 
@@ -343,6 +342,26 @@ SKIP: {
       '-file undef if never set, scalar context');
   is_deeply  ([$image->get ('-file')], [undef],
               '-file undef if never set, array context');
+}
+
+#------------------------------------------------------------------------------
+
+{
+  require MyTestImageBase;
+  my $image = Image::Base::PNGwriter->new (-width => 21,
+                                           -height => 10);
+  MyTestImageBase::check_image ($image,
+                                base_ellipse_func => sub {
+                                  my ($x1,$y1, $x2,$y2) = @_;
+                                  my $xr = $x2 - $x1;
+                                  if (! ($xr & 1) && $xr == ($y2 - $y1)) {
+                                    diag "pngwriter ellipse";
+                                    return 0;
+                                  } else {
+                                    diag "base ellipse";
+                                    return 1;
+                                  }
+                                });
 }
 
 exit 0;

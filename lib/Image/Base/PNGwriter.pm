@@ -26,18 +26,19 @@ use strict;
 use warnings;
 use Carp;
 use Image::PNGwriter;
-use base 'Image::Base';
+use vars '$VERSION', '@ISA';
+
+$VERSION = 3;
+
+use Image::Base;
+@ISA = ('Image::Base');
 
 # uncomment this to run the ### lines
 #use Smart::Comments;
 
-use vars '$VERSION';
-$VERSION = 2;
-
 # Cribs:
 #
 # /usr/include/pngwriter.h
-
 
 use constant _DEFAULT_PALETTE => { 'black' => [ 0,0,0 ],
                                    'white' => [ 1,1,1 ] };
@@ -229,7 +230,7 @@ sub ellipse {
     $pw->circle ($x1+$xr+1, $pw->getheight() - ($y1+$xr), $xr,
                  $self->colour_to_drgb($colour));
   } else {
-    ### use base
+    ### plain Image-Base
     shift->SUPER::ellipse(@_);
   }
 }
@@ -290,8 +291,8 @@ library.
 There's no colour name database as yet, only "black", "white" and hex
 "#RRGGBB" or "#RRRRGGGGBBBB".
 
-As per C<Image::Base>, coordinates are from 0,0 for the top-left corner.
-The underlying pngwriter library is 1,1 as the bottom-left but
+X,Y coordinates are the usual C<Image::Base> style 0,0 at the top-left
+corner.  The underlying pngwriter library is 1,1 as the bottom-left but
 C<Image::Base::PNGwriter> converts.
 
 =head1 FUNCTIONS
@@ -321,8 +322,8 @@ Draw an ellipse within the rectangle bounded by C<$x1>,C<$y1> and
 C<$x2>,C<$y2>.
 
 In the current implementation circles with an odd diameter (when
-C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
-pngwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
+C<$x2-$x1+1> is equal to C<$y2-$y1+1> and is an odd number) are drawn with
+PNGwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
 uses the features of pngwriter as far as possible and its drawing should be
 faster.
 

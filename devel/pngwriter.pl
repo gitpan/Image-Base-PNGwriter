@@ -17,7 +17,7 @@
 # You should have received a copy of the GNU General Public License along
 # with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
-
+use 5.010;
 use strict;
 use warnings;
 # use blib "$ENV{HOME}/perl/image/Image-PNGwriter-0.01/blib";
