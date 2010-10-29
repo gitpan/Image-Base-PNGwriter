@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License along
 with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Version 4, October 2010
+    - use Image:Base 1.09 for ellipse() fixes to chain up to
+
 Version 3, July 2010
     - lower a couple of stray "use 5.010"s
 

@@ -26,14 +26,14 @@ use MyMakeMakerExtras;
 
 MyMakeMakerExtras::WriteMakefile
   (NAME         => 'Image-Base-PNGwriter',
-   ABSTRACT     => 'Image::Base PNG using PNGwriter.',
+   ABSTRACT     => 'Image::Base on PNG files using PNGwriter.',
    VERSION_FROM => 'lib/Image/Base/PNGwriter.pm',
    AUTHOR       => 'Kevin Ryde <user42@zip.com.au>',
    LICENSE      => 'gpl',
    SIGN         => 1,
    PREREQ_PM    => {
                     'warnings' => 0,
-                    'Image::Base' => 0,
+                    'Image::Base' => '1.09',  # for ellipse() fixes
                     'Image::PNGwriter' => 0,
 
                     # for testing

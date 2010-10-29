@@ -28,9 +28,9 @@ use Carp;
 use Image::PNGwriter;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 3;
+$VERSION = 4;
 
-use Image::Base;
+use Image::Base 1.09; # version 1.09 for ellipse() fixes chaining up to that
 @ISA = ('Image::Base');
 
 # uncomment this to run the ### lines
@@ -287,6 +287,10 @@ C<Image::Base::PNGwriter> is a subclass of C<Image::Base>,
 C<Image::Base::PNGwriter> extends C<Image::Base> to create or update PNG
 format image files using the C<Image::PNGwriter> module and pngwriter
 library.
+
+The native PNGwriter has more features, but this module is an easy way to
+point C<Image::Base> style code at a PNGwriter and is a good way to get PNG
+out of some C<Image::Base> code.
 
 There's no colour name database as yet, only "black", "white" and hex
 "#RRGGBB" or "#RRRRGGGGBBBB".

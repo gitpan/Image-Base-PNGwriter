@@ -1,4 +1,4 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
 # Copyright 2010 Kevin Ryde
 
@@ -20,13 +20,14 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1006;
+use Test::More tests => 1101;
 
 use lib 't';
 use MyTestHelpers;
 BEGIN { MyTestHelpers::nowarnings() }
 
 require Image::Base::PNGwriter;
+diag "Image::Base version ", Image::Base->VERSION;
 
 
 sub my_bounding_box {
@@ -88,7 +89,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 3;
+  my $want_version = 4;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 
@@ -312,10 +313,6 @@ SKIP: {
   my $y1 = 11;
   foreach my $x2 ($x1+1 .. $x1+10) {
     foreach my $y2 ($y1+1 .. $y1+10) {
-
-      # Image::Base goes outside bounds, exercise the pngwriter ones only
-      my $xr = $x2 - $x1;
-      next unless (! ($xr & 1) && $xr == ($y2 - $y1));
 
       my $image = Image::Base::PNGwriter->new (-width => 70,
                                                -height => 30);
