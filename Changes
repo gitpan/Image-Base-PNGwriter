@@ -16,6 +16,9 @@ You should have received a copy of the GNU General Public License along
 with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
 
+Version 5, November 2010
+    - ellipse() $fill parameter
+
 Version 4, October 2010
     - use Image:Base 1.09 for ellipse() fixes to chain up to
 

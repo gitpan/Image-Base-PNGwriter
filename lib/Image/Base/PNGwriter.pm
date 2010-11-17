@@ -28,9 +28,9 @@ use Carp;
 use Image::PNGwriter;
 use vars '$VERSION', '@ISA';
 
-$VERSION = 4;
+$VERSION = 5;
 
-use Image::Base 1.09; # version 1.09 for ellipse() fixes chaining up to that
+use Image::Base 1.12; # version 1.12 for ellipse() $fill
 @ISA = ('Image::Base');
 
 # uncomment this to run the ### lines
@@ -214,12 +214,12 @@ sub rectangle {
 #       O
 #
 # which is x2==x1+4 and y2==y1+4.  The parameters to circle() are integers,
-# so only even-diameter circles like this can be done, others go to
-# Image::Base.
+# so only odd number of pixels across like this can be done ($x2-$x1 an even
+# number), others go to Image::Base.
 #
 sub ellipse {
-  my ($self, $x1, $y1, $x2, $y2, $colour) = @_;
-  ### ellipse: $x1, $y1, $x2, $y2, $colour
+  my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
+  ### ellipse: $x1, $y1, $x2, $y2, $colour, $fill
   my $xr = $x2 - $x1;
   if (! ($xr & 1) && $xr == ($y2 - $y1)) {
     my $pw = $self->{'-pngwriter'};
@@ -227,8 +227,9 @@ sub ellipse {
     ### $xr
     ### x centre: $x1+$xr
     ### y centre: $pw->getheight() - ($y1+$xr)
-    $pw->circle ($x1+$xr+1, $pw->getheight() - ($y1+$xr), $xr,
-                 $self->colour_to_drgb($colour));
+    my $method = ($fill ? 'filledcircle' : 'circle');
+    $pw->$method ($x1+$xr+1, $pw->getheight() - ($y1+$xr), $xr,
+                  $self->colour_to_drgb($colour));
   } else {
     ### plain Image-Base
     shift->SUPER::ellipse(@_);
@@ -322,11 +323,13 @@ Or an C<Image::PNGwriter> object can be given,
 
 =item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour)>
 
-Draw an ellipse within the rectangle bounded by C<$x1>,C<$y1> and
-C<$x2>,C<$y2>.
+=item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour, $fill)>
 
-In the current implementation circles with an odd diameter (when
-C<$x2-$x1+1> is equal to C<$y2-$y1+1> and is an odd number) are drawn with
+Draw an ellipse within the rectangle bounded by C<$x1>,C<$y1> and
+C<$x2>,C<$y2>.  Optional C<$fill> means a filled ellipse.
+
+In the current implementation circles with an odd diameter (meaning
+C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
 PNGwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
 uses the features of pngwriter as far as possible and its drawing should be
 faster.

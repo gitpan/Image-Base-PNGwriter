@@ -33,7 +33,7 @@ MyMakeMakerExtras::WriteMakefile
    SIGN         => 1,
    PREREQ_PM    => {
                     'warnings' => 0,
-                    'Image::Base' => '1.09',  # for ellipse() fixes
+                    'Image::Base' => '1.12',  # for ellipse() $fill
                     'Image::PNGwriter' => 0,
 
                     # for testing

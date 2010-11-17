@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Image-Base-PNGwriter
-version:            4
+version:            5
 abstract:           Image::Base on PNG files using PNGwriter.
 author:
     - Kevin Ryde <user42@zip.com.au>
@@ -11,7 +11,7 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    Image::Base:       1.09
+    Image::Base:       1.12
     Image::PNGwriter:  0
     List::Util:        0
     perl:              5.004

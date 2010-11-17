@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1101;
+use Test::More tests => 1476;
 
 use lib 't';
 use MyTestHelpers;
@@ -89,7 +89,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 4;
+  my $want_version = 5;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 
@@ -306,6 +306,19 @@ SKIP: {
   is ($image->xy (16,4), '#000000');
   is ($image->xy (16,5), '#000000');
   is ($image->xy (16,6), '#000000');
+}
+{
+  my $image = Image::Base::PNGwriter->new (-width => 20,
+                                           -height => 10);
+  # unfilled 3x3
+  $image->rectangle (0,0,19,9, '#000000');
+  $image->ellipse (5,5, 7,7, '#FFFFFF');
+  is ($image->xy (6,6), '#000000');
+
+  # filled 3x3
+  $image->rectangle (0,0,19,9, '#000000');
+  $image->ellipse (5,5, 7,7, '#FFFFFF', 1);
+  is ($image->xy (6,6), '#FFFFFF');
 }
 
 {
