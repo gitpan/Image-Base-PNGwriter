@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1476;
+use Test::More tests => 1677;
 
 use lib 't';
 use MyTestHelpers;
@@ -89,7 +89,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 5;
+  my $want_version = 6;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 

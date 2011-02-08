@@ -1,4 +1,4 @@
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -21,17 +21,16 @@ package Image::Base::PNGwriter;
 # Image::PNGwriter 0.01 requires 5.8.5, so that's the actual minimum.  It
 # looks like Image::PNGwriter could probably go earlier, unless maybe it
 # needs a new enough xsubpp for C++.
-use 5.004;
+use 5.006;
 use strict;
 use warnings;
 use Carp;
 use Image::PNGwriter;
-use vars '$VERSION', '@ISA';
 
-$VERSION = 5;
+our $VERSION = 6;
 
 use Image::Base 1.12; # version 1.12 for ellipse() $fill
-@ISA = ('Image::Base');
+our @ISA = ('Image::Base');
 
 # uncomment this to run the ### lines
 #use Smart::Comments;
@@ -325,13 +324,13 @@ Or an C<Image::PNGwriter> object can be given,
 
 =item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour, $fill)>
 
-Draw an ellipse within the rectangle bounded by C<$x1>,C<$y1> and
-C<$x2>,C<$y2>.  Optional C<$fill> means a filled ellipse.
+Draw an ellipse within the rectangle with top-left corner C<$x1>,C<$y1> and
+bottom-right C<$x2>,C<$y2>.  Optional C<$fill> true means a filled ellipse.
 
 In the current implementation circles with an odd diameter (meaning
 C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
 PNGwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
-uses the features of pngwriter as far as possible and its drawing should be
+uses the features of PNGwriter as far as possible and its drawing should be
 faster.
 
 =back
@@ -384,7 +383,7 @@ http://user42.tuxfamily.org/image-base-pngwriter/index.html
 
 =head1 LICENSE
 
-Image-Base-PNGwriter is Copyright 2010 Kevin Ryde
+Image-Base-PNGwriter is Copyright 2010, 2011 Kevin Ryde
 
 Image-Base-PNGwriter is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by the
