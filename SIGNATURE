@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.66.
+signed via the Module::Signature module, version 0.68.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -15,38 +15,42 @@ not run its Makefile.PL or Build.PL.
 Hash: SHA1
 
 SHA1 842745cb706f8f2126506f544492f7a80dbe29b3 COPYING
-SHA1 d4b4648c040bca0c2253ac669ec1af21ab80f0bd Changes
-SHA1 294d05434c663813af065e09bbb48b8b45555fa6 MANIFEST
-SHA1 6c771cc4b0718f7bc9c9af01889700d7bce0a8e6 MANIFEST.SKIP
-SHA1 6308f9b7b553394868ddde194bdb9476c5e50001 META.yml
-SHA1 6effaa950178beae4e37e760372eed0350c0acff Makefile.PL
-SHA1 f345c50a81c0ef03ded73d9882bcd0f22a9a6440 debian/changelog
+SHA1 6d2c25180156953780b607ebb74f0063d6a55c3d Changes
+SHA1 8e37c171675aabf06d21df00214a46a5be8d63a0 MANIFEST
+SHA1 1d745ef4cc154d3b13bfee6d1048ac4135fc1aa7 MANIFEST.SKIP
+SHA1 d7f1d324e1d451362ccd0549e4adc290ae790e9c META.yml
+SHA1 aad5ce7ff9642a8d14dada7de577dd28d4b72ffd Makefile.PL
+SHA1 7cd49b109e8dd00ffd4da9ba830814b8cb47fd6c debian/changelog
 SHA1 ac3478d69a3c81fa62e60f5c3696165a4e5e6ac4 debian/compat
-SHA1 eb13e1d8fb174d346dfd70ebb6b5dc2061cde390 debian/control
+SHA1 95cb920a144b4b58948313af22aa4f6207a85d16 debian/control
 SHA1 ef059fdd1cfb65fd854d19e180bb6126acd23e44 debian/copyright
 SHA1 6295122273dca7fec5824cb0d5cfab600c43af3e debian/rules
 SHA1 61652cd1568dcf2614df833eba241755eee34e89 debian/source/format
 SHA1 79dc1afe3d9212ffe390505d9c0c64fed52bbc2c debian/watch
 SHA1 3333166f433c06eb5180e04f406857c98a741f91 devel/Makefile
 SHA1 2fdd7da5ed7b2b6c317b157126f97845c986b4c3 devel/misc.cc
-SHA1 12bb6ba1caff9dd2df9e4615b6e48ceee3a55af1 devel/pngwriter.pl
+SHA1 84b4f816d8fe037df1e8d981b1a27e5eaf165af6 devel/pngwriter.pl
 SHA1 68ea7ae143fc8e62b51a59c2a0bc19b90e734456 devel/unused.pl
-SHA1 cf647ee28a7aaad9896d0063f8a2529919ccfcd3 inc/MyMakeMakerExtras.pm
+SHA1 d34492ea04ab0f004fbb3c5ca8a6bd42a216844e inc/MyMakeMakerExtras.pm
 SHA1 7a988b2aa7ed09f1cb9029a1ef3f0e2139dca0cf inc/my_pod2html
-SHA1 781f6f3fe1df06cd3e6ff5e2513c74f27d47512a lib/Image/Base/PNGwriter.pm
-SHA1 36b8eba56c87d62b1b41959187c717577dc16fa5 t/MyTestHelpers.pm
-SHA1 a75f20cb81375b7fe648fdcdf217a19f05b80e41 t/MyTestImageBase.pm
-SHA1 dcc5948235f6af478b024ddc676bbc535f5e97c9 t/PNGwriter-load.t
-SHA1 0a3ed2e36333060b992c252b77290d376d75e975 t/PNGwriter.t
+SHA1 1f664258cd43ac917127c034668423447d8dd162 lib/Image/Base/PNGwriter.pm
+SHA1 65d2aa91962fc56276be57bfdca4ad56ab6a4309 t/MyTestHelpers.pm
+SHA1 132ffec02cddd31e0b0140c93b1407c2c55f4a81 t/MyTestImageBase.pm
+SHA1 dcc5948235f6af478b024ddc676bbc535f5e97c9 t/PNGwriter-use.t
+SHA1 47ab1fefc6ba381d6203443f4cf9af89eb4ec4ce t/PNGwriter-weaken.t
+SHA1 55415c3b79b3939b69f75bad1884066ad8793e17 t/PNGwriter.t
 SHA1 0279c9310ec528d10a2a14e602bf98f1c776cce1 xt/0-META-read.t
+SHA1 219395eb91b03829e6f14db4ebd57d88ea972e61 xt/0-Test-ConsistentVersion.t
 SHA1 8a5e0f34131de34e584fbb1939c191a152566155 xt/0-Test-DistManifest.t
 SHA1 cc04a5fe5d8b8b38bfd56453d5d2686c8ea58783 xt/0-Test-Pod.t
 SHA1 8cc52e23427a82cfef5802bf512b13c65de2687a xt/0-Test-Synopsis.t
-SHA1 4c14845872d6eb4280e12f862d6ba2c343358c60 xt/0-Test-YAML-Meta.t
+SHA1 194f76a77d4b022a8b707932d3a45be310400360 xt/0-Test-YAML-Meta.t
+SHA1 c03e001ac27b9cb5954174852eb3087d758334d2 xt/0-file-is-part-of.t
+SHA1 daba2840c7f128371d42516619a0e04fee2f5ff4 xt/0-no-debug-left-on.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iD8DBQFNUIupLFMCIV9q3ToRAj39AJ4vUovzHU0LxJXVEQOeh98C8/n1hACfXttE
-pG+Z9Kms3glIohWkGTk3KdA=
-=YkZ/
+iD8DBQFOG4zJLFMCIV9q3ToRAm8ZAJsFBammy2GFf+fE4N+JvlI752hN0QCbBXMn
+ZpBWb9aDmChXHbWcTpfW3ek=
+=mVNm
 -----END PGP SIGNATURE-----

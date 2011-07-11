@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 1677;
+use Test::More tests => 2145;
 
 use lib 't';
 use MyTestHelpers;
@@ -89,7 +89,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 6;
+  my $want_version = 7;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 
@@ -356,22 +356,30 @@ SKIP: {
 
 #------------------------------------------------------------------------------
 
+# return true if given ellipse parameters uses Image::Base
+sub ellipse_uses_imagebase {
+  my ($x1,$y1, $x2,$y2) = @_;
+  my $xr = $x2 - $x1;
+  if (! ($xr & 1) && $xr == ($y2 - $y1)) {
+    diag "pngwriter ellipse";
+    return 0;
+  } else {
+    diag "base ellipse";
+    return 1;
+  }
+}
+
 {
   require MyTestImageBase;
-  my $image = Image::Base::PNGwriter->new (-width => 21,
+  my $image = Image::Base::PNGwriter->new (-width  => 21,
                                            -height => 10);
   MyTestImageBase::check_image ($image,
-                                base_ellipse_func => sub {
-                                  my ($x1,$y1, $x2,$y2) = @_;
-                                  my $xr = $x2 - $x1;
-                                  if (! ($xr & 1) && $xr == ($y2 - $y1)) {
-                                    diag "pngwriter ellipse";
-                                    return 0;
-                                  } else {
-                                    diag "base ellipse";
-                                    return 1;
-                                  }
-                                });
+                                pngwriter_exceptions => 1,
+                                base_ellipse_func => \&ellipse_uses_imagebase,
+                               );
+  MyTestImageBase::check_diamond ($image,
+                                  pngwriter_exceptions => 1,
+                                  skip_top_hline_fill=>1);
 }
 
 exit 0;

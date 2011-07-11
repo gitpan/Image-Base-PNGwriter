@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010 Kevin Ryde
+# Copyright 2010, 2011 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -22,9 +22,24 @@ use strict;
 use warnings;
 # use blib "$ENV{HOME}/perl/image/Image-PNGwriter-0.01/blib";
 
+# uncomment this to run the ### lines
+use Devel::Comments;
+
+{
+  my $class;
+  $class = 'Image::Base::PNGwriter';
+  eval "require $class" or die;
+  my $image = $class->new (-width  => 10,
+                           -height => 10);
+  $image->rectangle (0,0, 9,9, '#000000');
+  my $colour = $image->xy(0,0);
+  ### $colour
+  exit 0;
+}
+
 {
   require Image::PNGwriter;
-  my $pw = Image::PNGwriter->new(50,20,0,'/tmp/x.png');
+  my $pw = Image::PNGwriter->new(50,30,0,'/tmp/x.png');
   my $r = 0;
   #  $pw->plot (6,6, .5,.5,.5);
   # $pw->circle (6,6, $r, 1,1,1);
@@ -35,10 +50,15 @@ use warnings;
   #   $image->ellipse (20,        20-2-(2*$r),
   #                    20+(2*$r), 20-2,
   #                    '#00FF00');
-  $pw->write_png;
-  system ("convert /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
-  $image->ellipse (1,11, 6,13,
-                   '#00FF00');
+
+  $pw->filleddiamond (18,16, 8,8, 1,1,1);
+  $pw->diamond (33,16, 8,8, 1,1,1);
+
+  # $image->diamond (1,1, 6,6, 'white', 1);
+
+  # $image->ellipse (1,11, 6,13,
+  #                  '#00FF00');
+
   $pw->write_png;
   system ("convert /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
 

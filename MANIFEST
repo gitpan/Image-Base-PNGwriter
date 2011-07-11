@@ -20,9 +20,13 @@ MANIFEST.SKIP
 SIGNATURE
 t/MyTestHelpers.pm
 t/MyTestImageBase.pm
-t/PNGwriter-load.t
+t/PNGwriter-use.t
+t/PNGwriter-weaken.t
 t/PNGwriter.t
+xt/0-file-is-part-of.t
 xt/0-META-read.t
+xt/0-no-debug-left-on.t
+xt/0-Test-ConsistentVersion.t
 xt/0-Test-DistManifest.t
 xt/0-Test-Pod.t
 xt/0-Test-Synopsis.t

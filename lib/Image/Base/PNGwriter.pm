@@ -27,13 +27,15 @@ use warnings;
 use Carp;
 use Image::PNGwriter;
 
-our $VERSION = 6;
+our $VERSION = 7;
 
-use Image::Base 1.12; # version 1.12 for ellipse() $fill
+# version 1.12 for ellipse() $fill
+# version 1.16 for diamond()
+use Image::Base 1.12;
 our @ISA = ('Image::Base');
 
 # uncomment this to run the ### lines
-#use Smart::Comments;
+#use Devel::Comments;
 
 # Cribs:
 #
@@ -60,6 +62,7 @@ sub new {
   }
 
   # -palette not yet documented, maybe call it -cindex anyway
+  # FIXME: make a per-instance anon hash
   my $self = bless { -palette => _DEFAULT_PALETTE,
                      -zlib_compression => -1,
                    }, $class;
@@ -218,7 +221,7 @@ sub rectangle {
 #
 sub ellipse {
   my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
-  ### ellipse: $x1, $y1, $x2, $y2, $colour, $fill
+  ### ellipse(): $x1, $y1, $x2, $y2, $colour, $fill
   my $xr = $x2 - $x1;
   if (! ($xr & 1) && $xr == ($y2 - $y1)) {
     my $pw = $self->{'-pngwriter'};
@@ -232,6 +235,31 @@ sub ellipse {
   } else {
     ### plain Image-Base
     shift->SUPER::ellipse(@_);
+  }
+}
+
+sub diamond {
+  my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
+  ### diamond(): "$x1,$y1, $x2,$y2, $colour, fill=".($fill||0)
+  my $w = $x2 - $x1;
+  my $h = $y2 - $y1;
+  my $pw = $self->{'-pngwriter'};
+
+  if ($w && $h) {
+
+    ### x centre: $x1+int(($w+1)/2)+1
+    ### y centre: $pw->getheight() - ($y1+int($h/2)+1)
+    ### $w
+    ### $h
+
+    my $method = ($fill ? 'filleddiamond' : 'diamond');
+    $pw->$method ($x1+int(($w+1)/2)+1,
+                  $pw->getheight() - ($y1+int($h/2)),
+                  $w, $h,
+                  $self->colour_to_drgb($colour));
+  } else {
+    # 1xN or Nx1 dubious in PNGwriter 0.5.3, use rectangle instead
+    shift->rectangle (@_);
   }
 }
 
@@ -285,18 +313,19 @@ C<Image::Base::PNGwriter> is a subclass of C<Image::Base>,
 =head1 DESCRIPTION
 
 C<Image::Base::PNGwriter> extends C<Image::Base> to create or update PNG
-format image files using the C<Image::PNGwriter> module and pngwriter
+format image files using the C<Image::PNGwriter> module and PNGwriter
 library.
 
 The native PNGwriter has more features, but this module is an easy way to
-point C<Image::Base> style code at a PNGwriter and is a good way to get PNG
-out of some C<Image::Base> code.
+point C<Image::Base> style code at a PNGwriter to get PNG from some
+C<Image::Base> code.
 
-There's no colour name database as yet, only "black", "white" and hex
-"#RRGGBB" or "#RRRRGGGGBBBB".
+Colours can be hex "#RRGGBB" or "#RRRRGGGGBBBB", or names "black" and
+"white".  There's no colour name database in PNGwriter and nothing done here
+except "black" and "white".
 
 X,Y coordinates are the usual C<Image::Base> style 0,0 at the top-left
-corner.  The underlying pngwriter library is 1,1 as the bottom-left but
+corner.  The underlying PNGwriter library is 1,1 at the bottom-left but
 C<Image::Base::PNGwriter> converts.
 
 =head1 FUNCTIONS
@@ -314,7 +343,7 @@ C<-width> and C<-height>,
 Or an existing file can be read,
 
     $image = Image::Base::PNGwriter->new
-                 (-file => '/some/filename.png');
+               (-file => '/some/filename.png');
 
 Or an C<Image::PNGwriter> object can be given,
 
@@ -324,14 +353,25 @@ Or an C<Image::PNGwriter> object can be given,
 
 =item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour, $fill)>
 
-Draw an ellipse within the rectangle with top-left corner C<$x1>,C<$y1> and
+Draw an ellipse within the rectangle top-left corner C<$x1>,C<$y1> and
 bottom-right C<$x2>,C<$y2>.  Optional C<$fill> true means a filled ellipse.
 
 In the current implementation circles with an odd diameter (meaning
-C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
+C<$x2-$x1+1> is an odd number is equal to C<$y2-$y1+1>) are drawn with
 PNGwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
 uses the features of PNGwriter as far as possible and its drawing should be
 faster.
+
+=item C<$image-E<gt>diamond ($x1,$y1, $x2,$y2, $colour)>
+
+=item C<$image-E<gt>diamond ($x1,$y1, $x2,$y2, $colour, $fill)>
+
+Draw a diamond shape within the rectangle top-left C<$x1>,C<$y1> and
+bottom-right C<$x2>,C<$y2>.  Optional C<$fill> true means a filled diamond.
+
+In PNGwriter 0.5.3 a filled diamond might miss the top-most pixel for some
+sizes.  Currently there's no attempt to do anything about that here.  At
+small sizes the shape isn't always terrific either.
 
 =back
 
@@ -343,8 +383,8 @@ The following attributes can be C<get> and C<set>.
 
 =item C<-file> (string filename)
 
-The file to load in a C<new>, and the default filename for subsequent
-C<save> or C<load>.
+The file to load in a C<new()>, and the default filename for subsequent
+C<save()> or C<load()>.
 
 =item C<-width> (integer)
 
@@ -356,18 +396,18 @@ black.  The image must be at least 1x1 pixels.
 =item C<-zlib_compression> (integer 0-9 or -1)
 
 The amount of data compression to apply when saving.  The value is Zlib
-style 0 for no compression up to 9 for maximum effort.  -1 means Zlib's
-default level.
+style 0 for no compression up to 9 for maximum.  -1 means Zlib's default
+level (which is usually 6).
 
 =item C<-pngwriter> (C<Image::PNGwriter> object)
 
 The underlying C<Image::PNGwriter> object in use.
 
-Because filename and compression level can't be read out of a pngwriter
-object, if you set C<-pngwriter> then a C<get> of the C<-file> or
+Filename and compression level can't be read out of a pngwriter object,
+which means that if you set C<-pngwriter> then a C<get()> of the C<-file> or
 C<-zlib_compression> will return C<undef> and there's no default filename
-for C<load>.  A C<save> will use the filename and compression in the object
-though.  Perhaps this will improve in the future.
+for C<load()>.  But a C<save()> uses the filename and compression in the
+object.  Perhaps this will improve in the future.
 
 =back
 
