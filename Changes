@@ -1,4 +1,4 @@
-Copyright 2010, 2011 Kevin Ryde
+Copyright 2010, 2011, 2012 Kevin Ryde
 
 This file is part of Image-Base-PNGwriter.
 
@@ -15,6 +15,9 @@ General Public License for more details.
 You should have received a copy of the GNU General Public License along
 with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
+
+Version 8, June 2012
+    - 1 and 3 digit hex colours too
 
 Version 7, July 2011
     - new diamond()

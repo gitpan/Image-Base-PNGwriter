@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -24,6 +24,41 @@ use warnings;
 
 # uncomment this to run the ### lines
 use Devel::Comments;
+
+
+{
+  # rectangle off-screen
+
+  require Image::Base::PNGwriter;
+  my $image = Image::Base::PNGwriter->new (-width => 50, -height => 20);
+  $image->rectangle (0,0, 49,29, 'black', 1);
+
+  $image->rectangle (-10,-10,6,6, 'white', 1);
+
+  $image->save('/tmp/x.png');
+  system ("convert  -monochrome /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
+  exit 0;
+}
+
+{
+  require Image::PNGwriter;
+  exit 0;
+}
+
+{
+  require Image::Base::PNGwriter;
+  my $image = Image::Base::PNGwriter->new (-width => 50, -height => 20);
+  $image->rectangle (0,0, 49,29, 'black');
+
+  $image->diamond (1,1,6,6, 'white');
+  $image->diamond (11,1,16,6, 'white', 1);
+  $image->diamond (1,10,7,16, 'white');
+  $image->diamond (11,10,17,16, 'white', 1);
+
+  $image->save('/tmp/x.png');
+  system ("convert  -monochrome /tmp/x.png /tmp/x.xpm && cat /tmp/x.xpm");
+  exit 0;
+}
 
 {
   my $class;

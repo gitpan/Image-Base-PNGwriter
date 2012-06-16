@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -20,7 +20,7 @@
 use 5.004;
 use strict;
 use warnings;
-use Test::More tests => 2145;
+use Test::More tests => 2628;
 
 use lib 't';
 use MyTestHelpers;
@@ -89,7 +89,7 @@ sub my_bounding_box {
 # VERSION
 
 {
-  my $want_version = 7;
+  my $want_version = 8;
   is ($Image::Base::PNGwriter::VERSION, $want_version, 'VERSION variable');
   is (Image::Base::PNGwriter->VERSION,  $want_version, 'VERSION class method');
 
@@ -113,7 +113,9 @@ sub my_bounding_box {
 
 {
   my $image = Image::Base::PNGwriter->new (-pngwriter => 'dummy');
-  foreach my $elem (['#FF00FF', [1.0, 0.0, 1.0] ],
+  foreach my $elem (['#F0F',          [1.0, 0.0, 1.0] ],
+                    ['#FF00FF',       [1.0, 0.0, 1.0] ],
+                    ['#FFFFFF000',    [1.0, 1.0, 0.0] ],
                     ['#FFFFFFFF0000', [1.0, 1.0, 0.0] ],
                     ['black', [0,0,0] ],
                     ['white', [1,1,1] ],
@@ -142,6 +144,16 @@ sub my_bounding_box {
 
   $image->set(-file => 'PNGwriter-test.tmp');
   is ($image->get('-file'), 'PNGwriter-test.tmp', 'set() -file');
+}
+
+# new from -pngwriter object, per POD
+{
+  my $pwobj = Image::PNGwriter->new(200,100, 0, '/tmp/foo.png');
+  my $image = Image::Base::PNGwriter->new (-pngwriter => $pwobj);
+  isa_ok ($image, 'Image::Base');
+  isa_ok ($image, 'Image::Base::PNGwriter');
+  is ($image->get('-width'), 200);
+  is ($image->get('-height'), 100);
 }
 
 #------------------------------------------------------------------------------
@@ -375,6 +387,7 @@ sub ellipse_uses_imagebase {
                                            -height => 10);
   MyTestImageBase::check_image ($image,
                                 pngwriter_exceptions => 1,
+                                big_fetch_expect => '#000000',
                                 base_ellipse_func => \&ellipse_uses_imagebase,
                                );
   MyTestImageBase::check_diamond ($image,

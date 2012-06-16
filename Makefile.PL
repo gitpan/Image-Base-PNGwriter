@@ -1,6 +1,6 @@
-#!/usr/bin/perl
+#!/usr/bin/perl -w
 
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -43,9 +43,11 @@ MyMakeMakerExtras::WriteMakefile
 
    META_MERGE =>
    { resources =>
-     { homepage =>
-       'http://user42.tuxfamily.org/image-base-pngwriter/index.html',
+     { homepage => 'http://user42.tuxfamily.org/image-base-pngwriter/index.html',
+       license  => 'http://www.gnu.org/licenses/gpl.html',
      },
+     no_index => { directory=>['devel'] },
+
      optional_features =>
      { maximum_tests =>
        { description => 'Have "make test" do as much as possible.',

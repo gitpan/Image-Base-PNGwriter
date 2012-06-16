@@ -1,4 +1,4 @@
-# Copyright 2010, 2011 Kevin Ryde
+# Copyright 2010, 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -16,6 +16,10 @@
 # with Image-Base-PNGwriter.  If not, see <http://www.gnu.org/licenses/>.
 
 
+# Crib notes:
+#     ->plot() and in turn everything using that clips to the image size
+#     automatically
+
 package Image::Base::PNGwriter;
 # Image::Base is good for 5.004 or some such far back, though
 # Image::PNGwriter 0.01 requires 5.8.5, so that's the actual minimum.  It
@@ -27,7 +31,7 @@ use warnings;
 use Carp;
 use Image::PNGwriter;
 
-our $VERSION = 7;
+our $VERSION = 8;
 
 # version 1.12 for ellipse() $fill
 # version 1.16 for diamond()
@@ -153,6 +157,9 @@ sub set {
   }
 }
 
+#-------------------------------------------------------------------------------
+# load/save
+
 sub load {
   my ($self, $filename) = @_;
   if (@_ == 1) {
@@ -169,6 +176,10 @@ sub save {
   }
   $self->{'-pngwriter'}->write_png;
 }
+
+
+#-------------------------------------------------------------------------------
+# drawing
 
 sub xy {
   my ($self, $x, $y, $colour) = @_;
@@ -198,6 +209,7 @@ sub line {
 sub rectangle {
   my ($self, $x1, $y1, $x2, $y2, $colour, $fill) = @_;
   ### Image-Base-PNGwriter rectangle(): $x1, $y1, $x2, $y2, $colour, $fill
+
   my $pw = $self->{'-pngwriter'};
   my $height = $pw->getheight;
   my $method = ($fill ? 'filledsquare' : 'square');
@@ -263,6 +275,9 @@ sub diamond {
   }
 }
 
+#------------------------------------------------------------------------------
+# colours
+
 # not documented, yet ...
 sub colour_to_drgb {
   my ($self, $colour) = @_;
@@ -273,14 +288,19 @@ sub colour_to_drgb {
     return @$colour;
   }
 
-  # hex values turned into doubles by spacing equally from 00 -> 0.0 through
-  # FF -> 1.0, or FFFF -> 1.0.
-  if (my @rgb = ($colour =~ /^#([0-9A-F]{2})([0-9A-F]{2})([0-9A-F]{2})$/i)) {
-    return map {hex()/0xFF} @rgb;
+  # 1 to 4 digit hex, equally spaced from 00 -> 0.0 through FF -> 1.0, or
+  # FFFF -> 1.0 etc.
+  # Crib: [:xdigit:] matches some wide chars, but hex() as of perl 5.12.4
+  # doesn't accept them, so only 0-9A-F
+  if ($colour =~ /^#(([0-9A-F]{3}){1,4})$/i) {
+    my $len = length($1)/3; # of each group, so 1,2,3 or 4
+    my $divisor = hex('F' x $len);
+    return (map {hex($_)/$divisor}
+            substr ($colour, 1, $len),      # full size groups
+            substr ($colour, 1+$len, $len),
+            substr ($colour, -$len));
   }
-  if (my @rgb = ($colour =~ /^#([0-9A-F]{4})([0-9A-F]{4})([0-9A-F]{4})$/i)) {
-    return map {hex()/0xFFFF} @rgb;
-  }
+
   croak "Unknown colour: $colour";
 }
 
@@ -320,15 +340,27 @@ The native PNGwriter has more features, but this module is an easy way to
 point C<Image::Base> style code at a PNGwriter to get PNG from some
 C<Image::Base> code.
 
-Colours can be hex "#RRGGBB" or "#RRRRGGGGBBBB", or names "black" and
-"white".  There's no colour name database in PNGwriter and nothing done here
-except "black" and "white".
-
 X,Y coordinates are the usual C<Image::Base> style 0,0 at the top-left
 corner.  The underlying PNGwriter library is 1,1 at the bottom-left but
 C<Image::Base::PNGwriter> converts.
 
+=head2 Colour Names
+
+Colours can be
+
+     "#RGB"           1 to 4 digit hex
+     "#RRGGBB"
+     "#RRRGGGBBB"
+     "#RRRRGGGGBBBB"
+     "black"
+     "white"
+
+There's no colour name database in PNGwriter and no names here except
+"black" and "white".
+
 =head1 FUNCTIONS
+
+See L<Image::Base/FUNCTIONS> for behaviour common to all Image-Base classes.
 
 =over 4
 
@@ -347,7 +379,8 @@ Or an existing file can be read,
 
 Or an C<Image::PNGwriter> object can be given,
 
-    $image = Image::Base::PNGwriter->new (-pngwriter => $pwobj);
+    my $p = Image::PNGwriter->new(200,100, 0, '/tmp/foo.png');
+    $image = Image::Base::PNGwriter->new (-pngwriter => $p);
 
 =item C<$image-E<gt>ellipse ($x1,$y1, $x2,$y2, $colour)>
 
@@ -357,7 +390,7 @@ Draw an ellipse within the rectangle top-left corner C<$x1>,C<$y1> and
 bottom-right C<$x2>,C<$y2>.  Optional C<$fill> true means a filled ellipse.
 
 In the current implementation circles with an odd diameter (meaning
-C<$x2-$x1+1> is an odd number is equal to C<$y2-$y1+1>) are drawn with
+C<$x2-$x1+1> is an odd number and equal to C<$y2-$y1+1>) are drawn with
 PNGwriter and the rest go to C<Image::Base>.  This is a bit inconsistent but
 uses the features of PNGwriter as far as possible and its drawing should be
 faster.
@@ -371,13 +404,13 @@ bottom-right C<$x2>,C<$y2>.  Optional C<$fill> true means a filled diamond.
 
 In PNGwriter 0.5.3 a filled diamond might miss the top-most pixel for some
 sizes.  Currently there's no attempt to do anything about that here.  At
-small sizes the shape isn't always terrific either.
+small sizes the shape sometimes isn't very good either.
 
 =back
 
 =head1 ATTRIBUTES
 
-The following attributes can be C<get> and C<set>.
+The following attributes can be C<get()> and C<set()>.
 
 =over
 
@@ -423,7 +456,7 @@ http://user42.tuxfamily.org/image-base-pngwriter/index.html
 
 =head1 LICENSE
 
-Image-Base-PNGwriter is Copyright 2010, 2011 Kevin Ryde
+Image-Base-PNGwriter is Copyright 2010, 2011, 2012 Kevin Ryde
 
 Image-Base-PNGwriter is free software; you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by the

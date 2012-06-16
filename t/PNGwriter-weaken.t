@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# Copyright 2011 Kevin Ryde
+# Copyright 2011, 2012 Kevin Ryde
 
 # This file is part of Image-Base-PNGwriter.
 #
@@ -27,27 +27,19 @@ use lib 't';
 use MyTestHelpers;
 BEGIN { MyTestHelpers::nowarnings() }
 
-eval "use Test::Weaken 2.000; 1"
-  or plan skip_all => "due to Test::Weaken 2.000 not available -- $@";
+# 3.018 for ignore_object=> option
+eval "use Test::Weaken 3.018; 1"
+  or plan skip_all => "due to Test::Weaken 3.018 not available -- $@";
 diag ("Test::Weaken version ", Test::Weaken->VERSION);
 
-# version 1.18 for pure-perl refaddr() fix, maybe
-eval "use Scalar::Util 1.18 'refaddr'; 1"
-  or plan skip_all => "due to Scalar::Util 1.18 not available -- $@";
-
 plan tests => 1;
-
-sub my_ignore {
-  my ($ref) = @_;
-  return (refaddr($ref) == refaddr(Image::Base::PNGwriter::_DEFAULT_PALETTE));
-}
 
 {
   my $leaks = Test::Weaken::leaks
     ({ constructor => sub { return Image::Base::PNGwriter->new
                               (-width => 6, -height => 7);
                           },
-       ignore => \&my_ignore,
+       ignore_object => Image::Base::PNGwriter::_DEFAULT_PALETTE(),
      });
   is ($leaks, undef, 'deep garbage collection');
   MyTestHelpers::test_weaken_show_leaks($leaks);
